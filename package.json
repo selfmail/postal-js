@@ -1,0 +1,42 @@
+{
+  "name": "postal",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "postal",
+    "postalserver",
+    "postalserver-api"
+  ],
+  "homepage": "https://github.com/selfmail/postal-js",
+  "bugs": {
+    "url": "https://github.com/selfmail/postal-js/issues"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "local-release": "changeset version && changeset publish",
+    "build": "tsup"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "author": "Henri <henri@selfmail.app> (https://henri.gg)",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.7",
+    "@types/node": "^22.5.0",
+    "tsc": "^2.0.4",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
