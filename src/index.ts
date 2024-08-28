@@ -1,4 +1,4 @@
-import { Message, MessageResponse } from "./types";
+import { MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
 
 export default class Postal {
     /**
@@ -84,7 +84,7 @@ export default class Postal {
         plain_body,
         reply_to,
         tag
-    }: Message): Promise<MessageResponse> {
+    }: SendMessage): Promise<SendMessageResponse> {
         const msg = await fetch(`${this.url.startsWith("http") ? "" : "https://"}${this.url}/api/v1/send/message`, {
             method: 'POST',
             headers: {
@@ -111,7 +111,7 @@ export default class Postal {
             throw new Error("Fetch error. We could not reach the postal api. Please check your internet connection and the given url. The given url is: " + this.url);
         }
 
-        const data = await msg.json() as Omit<MessageResponse, "success">;
+        const data = await msg.json() as Omit<SendMessageResponse, "success">;
 
         // throw error if api key is wrong, or the url
         if (data.data.code === "InvalidServerAPIKey") {
@@ -124,8 +124,59 @@ export default class Postal {
         }
     }
 
-    public messageDetails() {
-        // TODO: implement messageDetails
+    /**
+     * Get the details of a message, you can choose which details you want to receive. The id means the id of the email. 
+     * 
+     * 
+     * Here's an example how to get the id: 
+     * ```json
+     * {
+     *     "status": "success",
+     *     "time": 0.000,
+     *     "flags": {},
+     *     "data": {
+     *         "message_id": "---", <= not your id !!!!
+     *         "messages": {
+     *             "mail@example.com": {
+     *                 "id": 1, <= your id
+     *                 "token": "_______"
+     *             }
+     *         }
+     *     }
+     * }
+     * ```
+     */
+    public async messageDetails({
+        id,
+        expansions
+    }: MessageDetails): Promise<MessageDetailsResponse> {
+        const msg = await fetch(`${this.url.startsWith("http") ? "" : "https://"}${this.url}/api/v1/messages/message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-Server-API-Key": this.key
+            },
+            body: JSON.stringify({
+                id,
+                _expansions: expansions
+            })
+        });
+
+        if (!msg.ok) {
+            throw new Error("Fetch error. We could not reach the postal api. Please check your internet connection and the given url. The given url is: " + this.url);
+        }
+
+        const data = await msg.json() as Omit<MessageDetailsResponse, "success">;
+
+        // throw error if api key is wrong, or the url
+        if (data.data.code === "InvalidServerAPIKey") {
+            throw new Error("Invalid server api key. When you don't now how to create an api key, please visit https://github.com/selfmail/postal-js.");
+        }
+
+        return {
+            ...data,
+            success: data.status === "error" ? false : true
+        }
     }
 
     // TODO: implement sendRaw
@@ -134,5 +185,5 @@ export default class Postal {
     }
 }
 
-export type { Message, MessageResponse } from "./types";
+export type { Expansions, MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
 
