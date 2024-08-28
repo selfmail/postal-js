@@ -35,7 +35,23 @@ export type SendMessageResponse = {
     error: string
 }
 
-export type Expansions = "raw_message" | "html_body"
+/**
+ * The expansions are the fields which are returned by the api. 
+ * 
+ * You can choose which fields you want to receive. 
+ * 
+ * The expansions are: 
+ * - status
+ * - details
+ * - inspection
+ * - plain_body
+ * - html_body
+ * - attachments
+ * - headers
+ * - raw_message
+ * - activity_entries
+ */
+export type Expansions = "status" | "details" | "inspection" | "plain_body" | "html_body" | "attachments" | "headers" | "raw_message" | "activity_entries"
 
 export type MessageDetails = {
     id: number,
@@ -103,4 +119,38 @@ export type MessageDetailsResponse = {
         };
     },
     error: string
+}
+
+export type MessageDeliveris = {
+    id: number,
+}
+export type MessageDeliveryResponse = {
+    success: boolean,
+    flags: Record<string, any>,
+    time: number
+    status: "success" | "error",
+    data: {
+        id: number;
+
+        // error fields
+        message?: string,
+        code?: string,
+
+        // fields which are only avaiable is the status is success
+        status?: string;
+        details?: string;
+        output?: string;
+        sent_with_ssl?: boolean;
+        log_id?: string;
+        time?: number;
+        timestamp?: number;
+    }[],
+    error: string
+}
+
+export type RawMessage = {
+    mail_from: string,
+    rcpt_to: string[],
+    data: string,
+    bounce?: boolean,
 }

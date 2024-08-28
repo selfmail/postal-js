@@ -16,8 +16,6 @@
     "url": "https://github.com/selfmail/postal-js/issues"
   },
   "scripts": {
-    "dev": "tsc --watch",
-    "test": "vitest run",
     "local-release": "changeset version && changeset publish",
     "build": "tsup"
   },
@@ -30,13 +28,12 @@
   },
   "author": "Henri <henri@selfmail.app> (https://henri.gg)",
   "license": "MIT",
-  "description": "",
+  "description": "A wrapper for the postalserver api with types.",
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
     "@types/node": "^22.5.0",
     "tsc": "^2.0.4",
     "tsup": "^8.2.4",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "typescript": "^5.5.4"
   }
 }

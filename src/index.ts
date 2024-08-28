@@ -1,4 +1,4 @@
-import { MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
+import { MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
 
 export default class Postal {
     /**
@@ -179,11 +179,63 @@ export default class Postal {
         }
     }
 
-    // TODO: implement sendRaw
-    public sendRaw() {
+    /**
+     * With this endpoint you can check if the message was delivered. You need the id of the message. 
+     * 
+     * Here's an example how to get the id: 
+     * ```json
+     * {
+     *     "status": "success",
+     *     "time": 0.000,
+     *     "flags": {},
+     *     "data": {
+     *         "message_id": "---", <= not your id !!!!
+     *         "messages": {
+     *             "mail@example.com": {
+     *                 "id": 1, <= your id
+     *                 "token": "_______"
+     *             }
+     *         }
+     *     }
+     * }
+     * ```
+     * 
+     * The response is an array of objects which contains the informations about the delivery. A array is used to show the multiple deliveries.
+     */
+    public async messageDelivery({
+        id
+    }: MessageDeliveris): Promise<MessageDeliveryResponse> {
+        const msg = await fetch(`${this.url.startsWith("http") ? "" : "https://"}${this.url}/api/v1/messages/delivery`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-Server-API-Key": this.key
+            },
+            body: JSON.stringify({
+                id
+            })
+        });
+
+        if (!msg.ok) {
+            throw new Error("Fetch error. We could not reach the postal api. Please check your internet connection and the given url. The given url is: " + this.url);
+        }
+
+        const data = await msg.json() as Omit<MessageDeliveryResponse, "success">;
+
+
+        return {
+            ...data,
+            success: data.status === "error" ? false : true
+        }
+    }
+
+    /**
+     * Send a raw message to a recipient.
+     */
+    public sendRawMessage() {
 
     }
 }
 
-export type { Expansions, MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
+export type { Expansions, MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
 
