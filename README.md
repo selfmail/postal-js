@@ -30,6 +30,6 @@ const msg = await postal.sendMessage({
   to: "user@example.com",
   from: "me@example.com",
   subject: "Hello",
-  text: "Hello world!",
+  html_body: "<h1>Hello World</h1>",
 });
 ```
