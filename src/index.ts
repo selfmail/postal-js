@@ -1,10 +1,14 @@
 
+import { Message } from "./types";
 
 export default class Postal {
     /**
      * Private api key to access the postal api.
      */
     private key: string;
+    /**
+     * The url to the postal api.
+     */
     private url: string;
 
     /**
@@ -39,17 +43,45 @@ export default class Postal {
 
     /**
      * Sends an email to the specified address. This will create an api call to your given url with the given key.
+     * 
+     * Example:
+     * 
+     * ```ts
+     * import { postal } from './postal';
+     * 
+     * const send = async () => {
+     *     await postal.sendMessage({        
+     *         to: 'test@test.com',
+     *         subject: 'Test',
+     *         html_body: '<h1>Hello World</h1>'
+     *     });
+     * }
+     * ```
      */
-    public sendMessage(to: string, subject: string, body: string): void {
-        fetch(`https://${this.url}/email/with/${this.key}`, {
+    public async sendMessage({
+        to,
+        subject,
+        cc,
+        bcc,
+        from,
+        sender,
+        html_body,
+        attachments,
+        bounce,
+        plain_body,
+        reply_to,
+        tag
+    }: Message) {
+        const msg = await fetch(`https://${this.url}/api/v1/send/message`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "X-Server-API-Key": this.key
             },
             body: JSON.stringify({
                 to,
                 subject,
-                htmlBody: body
+                htmlBody: html_body
             })
         });
     }
@@ -57,6 +89,4 @@ export default class Postal {
     public sendRaw() {
 
     }
-
-
 }
