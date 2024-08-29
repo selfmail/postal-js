@@ -1,3 +1,4 @@
+
 import { MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, RawMessage, RawMessageResponse, SendMessage, SendMessageResponse } from "./types";
 
 export default class Postal {
