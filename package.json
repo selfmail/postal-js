@@ -1,5 +1,5 @@
 {
-  "name": "postal",
+  "name": "postal-js",
   "version": "1.0.0",
   "main": "dist/index.js",
   "type": "module",
@@ -9,7 +9,9 @@
   "keywords": [
     "postal",
     "postalserver",
-    "postalserver-api"
+    "postalserver-api",
+    "postalserver-ts",
+    "postal-js"
   ],
   "homepage": "https://github.com/selfmail/postal-js",
   "bugs": {
@@ -28,7 +30,7 @@
   },
   "author": "Henri <henri@selfmail.app> (https://henri.gg)",
   "license": "MIT",
-  "description": "A wrapper for the postalserver api with types.",
+  "description": "A wrapper for the postalserver api with types. Made by selfmail.",
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
     "@types/node": "^22.5.0",
