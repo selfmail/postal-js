@@ -1,4 +1,4 @@
-import { MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
+import { MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, RawMessage, RawMessageResponse, SendMessage, SendMessageResponse } from "./types";
 
 export default class Postal {
     /**
@@ -230,12 +230,57 @@ export default class Postal {
     }
 
     /**
-     * Send a raw message to a recipient.
+     * Send a raw message to a recipient with an RFC2822 formatted email in the base64 format. This works similar to the sendMessage method, with the 
+     * difference that you can send a raw message and files could be better supported.
+     * 
+     * This is an example of an RFC2822 formatted email:
+     * 
+     * ```
+     * From: sender@example.com
+     * To: recipient@example.com
+     * Subject: Hey!
+     * Date: Mon, 28 Aug 2023 12:34:56 +0000
+     * MIME-Version: 1.0
+     * Content-Type: text/plain; charset=UTF-8
+     * 
+     * Hello World!
+     * ```
+     * 
+     * The data will be now encoded in base64 and will be send to the recipient. You can choose the recipient with the rcpt_to parameter. This will get
+     * an array of string which should be the email addresses for your recipients.
      */
-    public sendRawMessage() {
+    public async sendRawMessage({ data, mail_from, rcpt_to, bounce }: RawMessage): Promise<RawMessageResponse> {
+        const msg = await fetch(`${this.url.startsWith("http") ? "" : "https://"}${this.url}/api/v1/send/message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "X-Server-API-Key": this.key
+            },
+            body: JSON.stringify({
+                data,
+                mail_from,
+                rcpt_to,
+                bounce
+            })
+        });
 
+        if (!msg.ok || msg.status !== 404) {
+            throw new Error("Fetch error. We could not reach the postal api. Please check your internet connection and the given url. The given url is: " + this.url);
+        }
+
+        const json = await msg.json() as Omit<RawMessageResponse, "success">;
+
+        // throw error if api key is wrong, or the url
+        if (json.data.code === "InvalidServerAPIKey") {
+            throw new Error("Invalid server api key. When you don't now how to create an api key, please visit https://github.com/selfmail/postal-js.");
+        }
+
+        return {
+            success: json.status === "error" ? false : true,
+            ...json
+        }
     }
 }
 
-export type { Expansions, MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, SendMessage, SendMessageResponse } from "./types";
+export type { Expansions, MessageDeliveris, MessageDeliveryResponse, MessageDetails, MessageDetailsResponse, RawMessage, RawMessageResponse, SendMessage, SendMessageResponse } from "./types";
 

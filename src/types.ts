@@ -154,3 +154,23 @@ export type RawMessage = {
     data: string,
     bounce?: boolean,
 }
+
+export type RawMessageResponse = {
+    success: boolean,
+    flags: Record<string, any>,
+    time: number
+    status: "success" | "error",
+    data: {
+        // error fields
+        message?: string,
+        code?: string,
+
+        // success fields
+        messages?: Record<string, {
+            id: Number,
+            token: string
+        }>,
+        messages_id?: string,
+    },
+    error: string
+}
