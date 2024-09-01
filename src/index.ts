@@ -108,8 +108,9 @@ export default class Postal {
             })
         });
 
-        if (!msg.ok || msg.status !== 404) {
-            throw new Error("Fetch error. We could not reach the postal api. Please check your internet connection and the given url. The given url is: " + this.url);
+        if (!msg.ok) {
+            console.log(msg);
+            throw new Error(`Fetch error. We could not reach the postal api. Please check your internet connection and the given url. The given url is: ${this.url} and this is the status text: ${msg.statusText} (${msg.status})`);
         }
 
         const data = await msg.json() as Omit<SendMessageResponse, "success">;
